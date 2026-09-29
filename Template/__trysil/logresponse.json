@@ -1,0 +1,73 @@
+{
+  "id": "3f2a8c14-5b6d-4e7f-9a01-000000000a07",
+  "name": "LogResponse",
+  "tableName": "Log_Responses",
+  "sequenceName": "Log_ResponsesID",
+  "columns": [
+    {
+      "name": "ID",
+      "columnName": "ID",
+      "type": "PrimaryKey"
+    },
+    {
+      "name": "TaskID",
+      "columnName": "TaskID",
+      "required": true,
+      "type": "String",
+      "size": 50
+    },
+    {
+      "name": "Date",
+      "columnName": "Date",
+      "required": true,
+      "type": "DateTime"
+    },
+    {
+      "name": "Username",
+      "columnName": "Username",
+      "type": "String",
+      "size": 255,
+      "allowEmpty": true
+    },
+    {
+      "name": "UserAreas",
+      "columnName": "UserAreas",
+      "type": "Memo"
+    },
+    {
+      "name": "StatusCode",
+      "columnName": "StatusCode",
+      "required": true,
+      "type": "Integer"
+    },
+    {
+      "name": "ContentType",
+      "columnName": "ContentType",
+      "required": true,
+      "type": "String",
+      "size": 255
+    },
+    {
+      "name": "ContentEncoding",
+      "columnName": "ContentEncoding",
+      "required": true,
+      "type": "String",
+      "size": 255
+    },
+    {
+      "name": "Content",
+      "columnName": "Content",
+      "type": "Memo"
+    },
+    {
+      "name": "BinaryContent",
+      "columnName": "BinaryContent",
+      "type": "Memo"
+    },
+    {
+      "name": "VersionID",
+      "columnName": "VersionID",
+      "type": "Version"
+    }
+  ]
+}

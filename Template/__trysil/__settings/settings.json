@@ -1,0 +1,7 @@
+{
+  "modelDirectory": "Model",
+  "unitFilenames": "{ProjectName}.Model.{EntityName}",
+  "controllers": true,
+  "filterProperties": true,
+  "databaseType": 5
+}

@@ -1,0 +1,48 @@
+{
+  "server": {
+    "baseUri": "/api",
+    "port": 4450
+  },
+  "database": {
+    "driver": "MSSQL",
+    "server": "SERVER\\INSTANCE",
+    "username": "sa",
+    "password": "CHANGE_ME",
+    "databaseName": "APIData"
+  },
+  "log": {
+    "enabled": true,
+    "database": {
+      "driver": "MSSQL",
+      "server": "SERVER\\INSTANCE",
+      "username": "sa",
+      "password": "CHANGE_ME",
+      "databaseName": "APILogData"
+    }
+  },
+  "secrets": {
+    "password": "",
+    "jwtKeys": {
+      "current": "2026-07",
+      "signingKey": "",
+      "keys": [
+        {
+          "id": "2026-07",
+          "secret": "",
+          "publicKey": ""
+        }
+      ]
+    }
+  },
+  "auth": {
+    "accessTokenMinutes": 20
+  },
+  "connectionPool": {
+    "enabled": true,
+    "maximumItems": 25
+  },
+  "cors": {
+    "allowHeaders": "",
+    "allowOrigin": ""
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "id": "3f2a8c14-5b6d-4e7f-9a01-000000000a04",
+  "name": "UserTypeArea",
+  "tableName": "UserTypesAreas",
+  "sequenceName": "UserTypesAreasID",
+  "columns": [
+    {
+      "name": "ID",
+      "columnName": "ID",
+      "type": "PrimaryKey"
+    },
+    {
+      "name": "UserType",
+      "columnName": "UserTypeID",
+      "required": true,
+      "type": "{3f2a8c14-5b6d-4e7f-9a01-000000000a02}"
+    },
+    {
+      "name": "Area",
+      "columnName": "AreaID",
+      "required": true,
+      "type": "{3f2a8c14-5b6d-4e7f-9a01-000000000a01}"
+    },
+    {
+      "name": "VersionID",
+      "columnName": "VersionID",
+      "type": "Version"
+    }
+  ]
+}
