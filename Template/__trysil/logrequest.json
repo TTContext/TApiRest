@@ -1,0 +1,81 @@
+{
+  "id": "3f2a8c14-5b6d-4e7f-9a01-000000000a06",
+  "name": "LogRequest",
+  "tableName": "Log_Requests",
+  "sequenceName": "Log_RequestsID",
+  "columns": [
+    {
+      "name": "ID",
+      "columnName": "ID",
+      "type": "PrimaryKey"
+    },
+    {
+      "name": "TaskID",
+      "columnName": "TaskID",
+      "required": true,
+      "type": "String",
+      "size": 50
+    },
+    {
+      "name": "Host",
+      "columnName": "Host",
+      "required": true,
+      "type": "String",
+      "size": 255
+    },
+    {
+      "name": "Date",
+      "columnName": "Date",
+      "required": true,
+      "type": "DateTime"
+    },
+    {
+      "name": "Uri",
+      "columnName": "Uri",
+      "required": true,
+      "type": "String",
+      "size": 255
+    },
+    {
+      "name": "Params",
+      "columnName": "Params",
+      "type": "Memo"
+    },
+    {
+      "name": "MethodType",
+      "columnName": "MethodType",
+      "required": true,
+      "type": "String",
+      "size": 255
+    },
+    {
+      "name": "Content",
+      "columnName": "Content",
+      "type": "Memo"
+    },
+    {
+      "name": "Headers",
+      "columnName": "Headers",
+      "type": "Memo"
+    },
+    {
+      "name": "RemoteIP",
+      "columnName": "RemoteIP",
+      "required": true,
+      "type": "String",
+      "size": 255
+    },
+    {
+      "name": "ClientIP",
+      "columnName": "ClientIP",
+      "required": true,
+      "type": "String",
+      "size": 255
+    },
+    {
+      "name": "VersionID",
+      "columnName": "VersionID",
+      "type": "Version"
+    }
+  ]
+}

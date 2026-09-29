@@ -1,0 +1,64 @@
+{
+  "id": "3f2a8c14-5b6d-4e7f-9a01-000000000a03",
+  "name": "User",
+  "tableName": "Users",
+  "sequenceName": "UsersID",
+  "columns": [
+    {
+      "name": "ID",
+      "columnName": "ID",
+      "type": "PrimaryKey"
+    },
+    {
+      "name": "Firstname",
+      "columnName": "Firstname",
+      "required": true,
+      "type": "String",
+      "size": 100
+    },
+    {
+      "name": "Lastname",
+      "columnName": "Lastname",
+      "required": true,
+      "type": "String",
+      "size": 100
+    },
+    {
+      "name": "UserType",
+      "columnName": "UserTypeID",
+      "required": true,
+      "type": "{3f2a8c14-5b6d-4e7f-9a01-000000000a02}"
+    },
+    {
+      "name": "Email",
+      "columnName": "Email",
+      "required": true,
+      "type": "String",
+      "size": 255
+    },
+    {
+      "name": "Salt",
+      "columnName": "Salt",
+      "required": true,
+      "type": "String",
+      "size": 32
+    },
+    {
+      "name": "Password",
+      "columnName": "Password",
+      "required": true,
+      "type": "String",
+      "size": 64
+    },
+    {
+      "name": "DisabledAt",
+      "columnName": "DisabledAt",
+      "type": "DateTime"
+    },
+    {
+      "name": "VersionID",
+      "columnName": "VersionID",
+      "type": "Version"
+    }
+  ]
+}

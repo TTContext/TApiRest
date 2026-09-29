@@ -1,0 +1,21 @@
+{
+  "_Config/Tenants/": ["multitenant"],
+  "_Config/Tenants/localhost-4450/_config.json#log": ["log"],
+
+  "_Config/TApiRestTemplate.json#database": ["!multitenant"],
+  "_Config/TApiRestTemplate.json#log": ["log"],
+  "_Config/TApiRestTemplate.json#log.database": ["!multitenant"],
+  "_Config/TApiRestTemplate.json#secrets": ["auth"],
+  "_Config/TApiRestTemplate.json#secrets.jwtKeys.signingKey": ["rs256"],
+  "_Config/TApiRestTemplate.json#secrets.jwtKeys.keys[].publicKey": ["rs256"],
+  "_Config/TApiRestTemplate.json#secrets.jwtKeys.keys[].secret": ["!rs256"],
+  "_Config/TApiRestTemplate.json#auth": ["auth"],
+
+  "__trysil/area.json": ["auth"],
+  "__trysil/user.json": ["auth"],
+  "__trysil/usertype.json": ["auth"],
+  "__trysil/usertypearea.json": ["auth"],
+  "__trysil/logaction.json": ["log", "!multitenant"],
+  "__trysil/logrequest.json": ["log"],
+  "__trysil/logresponse.json": ["log"]
+}

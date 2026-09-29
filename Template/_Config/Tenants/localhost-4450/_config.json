@@ -1,0 +1,18 @@
+{
+  "database": {
+    "driver": "MSSQL",
+    "server": "SERVER\\INSTANCE",
+    "username": "sa",
+    "password": "CHANGE_ME",
+    "databaseName": "APIData"
+  },
+  "log": {
+    "database": {
+      "driver": "MSSQL",
+      "server": "SERVER\\INSTANCE",
+      "username": "sa",
+      "password": "CHANGE_ME",
+      "databaseName": "APILogData"
+    }
+  }
+}
