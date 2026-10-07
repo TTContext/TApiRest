@@ -98,6 +98,8 @@ begin
   inherited AfterConstruction;
 { TFeature:sqids }
   TTJSonSqids.Instance.UseSqids := True;
+  // Change the Sqids alphabet here, for example:
+  // TTJSonSqids.Instance.Alphabet := 'q7w3e9r1t5y8u2i6o4p0asdfghjklzxcvbnm';
 { /TFeature:sqids }
 (* TFeature:!sqids
   TTJSonSqids.Instance.UseSqids := False;
