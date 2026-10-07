@@ -96,7 +96,12 @@ end;
 procedure THttp.AfterConstruction;
 begin
   inherited AfterConstruction;
+{ TFeature:sqids }
+  TTJSonSqids.Instance.UseSqids := True;
+{ /TFeature:sqids }
+(* TFeature:!sqids
   TTJSonSqids.Instance.UseSqids := False;
+*)
 
   ConfigureConnectionPool;
 (* TFeature:!multitenant
