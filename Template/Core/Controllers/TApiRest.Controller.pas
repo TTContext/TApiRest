@@ -132,7 +132,8 @@ type
 
     [TDelete('/?/?')]
     procedure Delete(
-      const AID: TTPrimaryKey; const AVersionID: TTVersion); virtual;
+      const AID: TTPrimaryKey;
+      [TNotSqid] const AVersionID: TTVersion); virtual;
 
     [TGet('/createnew')]
     procedure CreateNew; virtual;
