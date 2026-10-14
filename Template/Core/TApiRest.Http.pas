@@ -15,6 +15,10 @@ uses
   Trysil.JSon.Sqids,
   Trysil.Http,
   Trysil.Data.FireDAC.ConnectionPool,
+{ TFeature:openapi }
+  Trysil.OpenAPI.Types,
+  Trysil.OpenAPI,
+{ /TFeature:openapi }
 
   TApiRest.Config,
 (* TFeature:!multitenant
@@ -53,11 +57,17 @@ type
 { TFeature:log }
     procedure RegisterLog;
 { /TFeature:log }
+{ TFeature:openapi }
+    procedure RegisterOpenApi;
+{ /TFeature:openapi }
 
     function GetPort: Word;
     function GetStarted: Boolean;
   strict protected
     procedure RegisterEntityControllers; virtual; abstract;
+{ TFeature:openapi }
+    function OpenApiInfo: TTOpenApiInfo; virtual; abstract;
+{ /TFeature:openapi }
 
     property Server: TTHttpServer<TContext> read FServer;
   public
@@ -127,6 +137,9 @@ begin
   RegisterAuthentication;
 { /TFeature:auth }
   RegisterControllers;
+{ TFeature:openapi }
+  RegisterOpenApi;
+{ /TFeature:openapi }
 end;
 
 procedure THttp.ConfigureConnectionPool;
@@ -161,6 +174,18 @@ begin
 { /TFeature:auth }
   RegisterEntityControllers;
 end;
+
+{ TFeature:openapi }
+procedure THttp.RegisterOpenApi;
+begin
+{ TFeature:auth }
+  TTOpenApi<TContext>.Register(FServer, OpenApiInfo);
+{ /TFeature:auth }
+(* TFeature:!auth
+  TTOpenApi<TContext>.RegisterAnonymous(FServer, OpenApiInfo);
+*)
+end;
+{ /TFeature:openapi }
 
 { TFeature:log }
 procedure THttp.RegisterLog;

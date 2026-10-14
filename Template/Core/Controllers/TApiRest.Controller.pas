@@ -14,6 +14,9 @@ interface
 uses
   System.Classes,
   System.SysUtils,
+{ TFeature:openapi }
+  System.TypInfo,
+{ /TFeature:openapi }
   Trysil.Types,
   Trysil.Filter,
   Trysil.Data,
@@ -23,6 +26,10 @@ uses
   Trysil.Http.Filter,
   Trysil.Http.Controller,
   Trysil.Http.Entity,
+{ TFeature:openapi }
+  Trysil.OpenAPI.Types,
+  Trysil.OpenAPI.Attributes,
+{ /TFeature:openapi }
 { TFeature:multitenant }
   Trysil.Http.MultiTenant,
 { /TFeature:multitenant }
@@ -84,19 +91,45 @@ type
       const AResponse: TTHttpResponse); override;
     destructor Destroy; override;
 
+{ TFeature:openapi }
+    class function EntityClass: TClass; override;
+
+{ /TFeature:openapi }
     [TGet('/?')]
+{ TFeature:openapi }
+    [TSummary('Read by ID')]
+    [TResponse(200, TTOpenApiShape.Single, 'The entity, with its details')]
+{ /TFeature:openapi }
     procedure Get(const AID: TTPrimaryKey); virtual;
 
     [TGet]
+{ TFeature:openapi }
+    [TSummary('Read all')]
+    [TResponse(200, TTOpenApiShape.Page, 'Count and rows')]
+{ /TFeature:openapi }
     procedure SelectAll; virtual;
 
     [TPost('/select')]
+{ TFeature:openapi }
+    [TSummary('Read with a filter')]
+    [TRequestBody(TTOpenApiFilter, TTOpenApiShape.Single, 'Filter')]
+    [TResponse(200, TTOpenApiShape.Page, 'Count and rows')]
+{ /TFeature:openapi }
     procedure Select; virtual;
 
     [TGet('/find/?')]
+{ TFeature:openapi }
+    [TSummary('Read by ID, without details')]
+    [TResponse(200, TTOpenApiShape.Single, 'The entity')]
+{ /TFeature:openapi }
     procedure Find(const AID: TTPrimaryKey); virtual;
 
     [TGet('/metadata')]
+{ TFeature:openapi }
+    [TSummary('Metadata')]
+    [TResponse(
+      200, TTOpenApiMetadata, TTOpenApiShape.Single, 'Columns and keys')]
+{ /TFeature:openapi }
     procedure Metadata; virtual;
   end;
 
@@ -125,17 +158,38 @@ type
     destructor Destroy; override;
 
     [TPost]
+{ TFeature:openapi }
+    [TSummary('Insert')]
+    [TRequestBody(TTOpenApiShape.Single, 'The entity to insert')]
+    [TResponse(200, TTOpenApiShape.Single, 'The inserted entity')]
+{ /TFeature:openapi }
     procedure Insert; virtual;
 
     [TPut]
+{ TFeature:openapi }
+    [TSummary('Update')]
+    [TRequestBody(TTOpenApiShape.Single, 'The entity to update')]
+    [TResponse(200, TTOpenApiShape.Single, 'The updated entity')]
+    [TResponse(404, 'The entity does not exist')]
+    [TResponse(409, 'The version changed in the meantime')]
+{ /TFeature:openapi }
     procedure Update; virtual;
 
     [TDelete('/?/?')]
+{ TFeature:openapi }
+    [TSummary('Delete')]
+    [TResponse(200, 'Deleted')]
+    [TResponse(409, 'The version changed in the meantime')]
+{ /TFeature:openapi }
     procedure Delete(
       const AID: TTPrimaryKey;
       [TNotSqid] const AVersionID: TTVersion); virtual;
 
     [TGet('/createnew')]
+{ TFeature:openapi }
+    [TSummary('A new entity with its defaults')]
+    [TResponse(200, TTOpenApiShape.Single, 'The new entity')]
+{ /TFeature:openapi }
     procedure CreateNew; virtual;
   end;
 
@@ -182,6 +236,13 @@ end;
 
 { TReadOnlyController<T> }
 
+{ TFeature:openapi }
+class function TReadOnlyController<T>.EntityClass: TClass;
+begin
+  result := GetTypeData(TypeInfo(T))^.ClassType;
+end;
+
+{ /TFeature:openapi }
 constructor TReadOnlyController<T>.Create(
   const AContext: TContext;
   const ARequest: TTHttpRequest;
