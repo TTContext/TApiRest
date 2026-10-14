@@ -27,9 +27,11 @@ One executable runs as a Windows service, as a tray application with `/debug`, a
 | Feature | What it adds |
 |---|---|
 | `multitenant` | The connection is resolved per tenant from the `Host` header, with `_Config\Tenants\<host>\_config.json`. Without it, one connection is registered at startup from the `database` section. |
-| `auth` | Login, token renewal, JWT, password hashing, user disabling, and the `/auth` controllers. |
+| `auth` | Login, token renewal, JWT, password hashing, user disabling, and the `/auth` controllers. Without it the server is `AllowAnonymous` and every route is open. |
 | `log` | Request, response and action logging to the log database, switched by `log.enabled`, which defaults to `True` when the `log` section is missing. When enabled the `log.database` section is mandatory and the service does not start without it; with `multitenant` the connection comes from each tenant file instead, and `log.enabled` alone decides. |
 | `rs256` | JWT signed with an RSA key pair, from the PEM files declared by each `secrets.jwtKeys` entry, using OpenSSL `libcrypto` resolved at runtime. Without it, HS256 with the secret of each entry. Requires `auth`. Every entry needs its public key. The private key is not part of an entry: it is `secrets.jwtKeys.signingKey`, the key the service signs with, and a service without it verifies tokens but cannot issue them. Tokens are signed with the key named by `secrets.jwtKeys.current` and carry its id as the `kid` header; verification resolves the key by the token's own `kid`, so retired keys keep working until the tokens signed with them expire. |
+| `sqids` | Primary keys and `TTLazy<T>` relations travel as Sqids in the JSON and in the route parameters; the version of the delete route stays a plain number (`[TNotSqid]`). Available from line `2.1.1`. |
+| `openapi` | The OpenAPI 3.1 document on `<BaseUri>/openapi.json`: summaries, request bodies and responses on the base controllers, `EntityClass` on `TReadOnlyController<T>`, and the registration in `THttp`, protected with `auth` and public without it. The title is the description of the service. Available from line `2.1.2`. |
 
 ## Markers
 
