@@ -125,6 +125,9 @@ begin
 
   FServer.CorsConfig.AllowHeaders := TConfig.Instance.Cors.AllowHeaders;
   FServer.CorsConfig.AllowOrigin := TConfig.Instance.Cors.AllowOrigin;
+(* TFeature:!auth
+  FServer.AllowAnonymous := True;
+*)
 
 { TFeature:log }
   RegisterLog;
