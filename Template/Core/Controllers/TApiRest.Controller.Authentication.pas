@@ -16,10 +16,11 @@ uses
   System.Classes,
   System.SysUtils,
   System.Generics.Collections,
-  System.JSon,
   Data.DB,
   Trysil.Consts,
   Trysil.Types,
+  Trysil.Attributes,
+  Trysil.Validation.Attributes,
   Trysil.Generics.Collections,
   Trysil.Filter,
   Trysil.Http.Consts,
@@ -28,6 +29,11 @@ uses
   Trysil.Http.Exceptions,
   Trysil.Http.Classes,
   Trysil.Http.JWT,
+  Trysil.JSon.Types,
+{ TFeature:openapi }
+  Trysil.OpenAPI.Types,
+  Trysil.OpenAPI.Attributes,
+{ /TFeature:openapi }
 
   TApiRest.Consts,
   TApiRest.Context,
@@ -39,11 +45,56 @@ uses
 
 type
 
+{ TLoginRequest }
+
+  TLoginRequest = class
+  strict private
+    [TColumn('Email')]
+    [TRequired]
+    FEmail: String;
+
+    [TColumn('Password')]
+    [TRequired]
+    FPassword: String;
+  public
+    property Email: String read FEmail;
+    property Password: String read FPassword;
+  end;
+
+{ TChangePasswordRequest }
+
+  TChangePasswordRequest = class
+  strict private
+    [TColumn('OldPassword')]
+    [TRequired]
+    FOldPassword: String;
+
+    [TColumn('NewPassword')]
+    [TRequired]
+    FNewPassword: String;
+  public
+    property OldPassword: String read FOldPassword;
+    property NewPassword: String read FNewPassword;
+  end;
+
+{ TTokenResponse }
+
+  TTokenResponse = class
+  strict private
+    [TColumn('Token')]
+    FToken: String;
+  public
+    constructor Create(const AToken: String);
+
+    property Token: String read FToken;
+  end;
+
 { TAuthenticationController }
 
   [TUri('/auth')]
   TAuthenticationController = class(TController)
   strict protected
+    procedure ReadRequest<T: class>(const ARequest: T);
     procedure AddPayloadAreas(
       const AUser: TUser; const AAree: TList<String>);
     procedure SelectUsers(
@@ -70,16 +121,32 @@ type
 
   [TAuthorizationType(TTHttpAuthorizationType.None)]
   TLoginController = class(TAuthenticationController)
+  strict private
+    procedure LoginUser(const ARequest: TLoginRequest);
   public
     [TPost('/login')]
+{ TFeature:openapi }
+    [TSummary('Login')]
+    [TRequestBody(TLoginRequest, TTOpenApiShape.Single, 'Credentials')]
+    [TResponse(200, TTokenResponse, TTOpenApiShape.Single, 'The token')]
+    [TResponse(401, 'Invalid credentials')]
+{ /TFeature:openapi }
     procedure Login;
   end;
 
 { TChangePasswordController }
 
   TChangePasswordController = class(TAuthenticationController)
+  strict private
+    procedure ChangeUserPassword(const ARequest: TChangePasswordRequest);
   public
     [TPost('/changepassword')]
+{ TFeature:openapi }
+    [TSummary('Change the password')]
+    [TRequestBody(
+      TChangePasswordRequest, TTOpenApiShape.Single, 'Old and new password')]
+    [TResponse(200, TTokenResponse, TTOpenApiShape.Single, 'A new token')]
+{ /TFeature:openapi }
     procedure ChangePassword;
   end;
 
@@ -88,12 +155,30 @@ type
   TRenewTokenController = class(TAuthenticationController)
   public
     [TPost('/renewtoken')]
+{ TFeature:openapi }
+    [TSummary('Renew the token')]
+    [TResponse(200, TTokenResponse, TTOpenApiShape.Single, 'A new token')]
+{ /TFeature:openapi }
     procedure RenewToken;
   end;
 
 implementation
 
+{ TTokenResponse }
+
+constructor TTokenResponse.Create(const AToken: String);
+begin
+  inherited Create;
+  FToken := AToken;
+end;
+
 { TAuthenticationController }
+
+procedure TAuthenticationController.ReadRequest<T>(const ARequest: T);
+begin
+  HttpContext.EntityFromJSonObject<T>(FRequest.JSonContent, ARequest);
+  HttpContext.Validate<T>(ARequest);
+end;
 
 procedure TAuthenticationController.AddPayloadAreas(
   const AUser: TUser; const AAree: TList<String>);
@@ -198,14 +283,15 @@ procedure TAuthenticationController.ResponseToken(
 { /TFeature:multitenant }
   const AUser: TUser);
 var
-  LJSon: TJSonObject;
+  LResponse: TTokenResponse;
 begin
-  LJSon := TJSonObject.Create;
+  LResponse := TTokenResponse.Create(
+    CreateToken({ TFeature:multitenant }ATenant, { /TFeature:multitenant }AUser));
   try
-    LJSon.AddPair('token', CreateToken({ TFeature:multitenant }ATenant, { /TFeature:multitenant }AUser));
-    FResponse.Content := LJSon.ToJSon();
+    FResponse.Content := HttpContext.EntityToJSon<TTokenResponse>(
+      LResponse, TTJSonSerializerConfig.Default);
   finally
-    LJSon.Free;
+    LResponse.Free;
   end;
 end;
 
@@ -213,19 +299,27 @@ end;
 
 procedure TLoginController.Login;
 var
+  LRequest: TLoginRequest;
+begin
+  LRequest := TLoginRequest.Create;
+  try
+    ReadRequest<TLoginRequest>(LRequest);
+    LoginUser(LRequest);
+  finally
+    LRequest.Free;
+  end;
+end;
+
+procedure TLoginController.LoginUser(const ARequest: TLoginRequest);
+var
   LUsers: TTList<TUser>;
-  LPassword: String;
 begin
   LUsers := HttpContext.CreateEntityList<TUser>();
   try
-    SelectUsers(
-      LUsers,
-      FRequest.JSonContent.GetValue<String>('email', String.Empty));
-    LPassword := FRequest.JSonContent.GetValue<String>(
-      'password', String.Empty);
-    VerifyPassword(LUsers[0], LPassword);
+    SelectUsers(LUsers, ARequest.Email);
+    VerifyPassword(LUsers[0], ARequest.Password);
     VerifyEnabled(LUsers[0]);
-    HashPlainPassword(LUsers[0], LPassword);
+    HashPlainPassword(LUsers[0], ARequest.Password);
     ResponseToken({ TFeature:multitenant }TenantName, { /TFeature:multitenant }LUsers[0]);
   finally
     LUsers.Free;
@@ -236,18 +330,28 @@ end;
 
 procedure TChangePasswordController.ChangePassword;
 var
+  LRequest: TChangePasswordRequest;
+begin
+  LRequest := TChangePasswordRequest.Create;
+  try
+    ReadRequest<TChangePasswordRequest>(LRequest);
+    ChangeUserPassword(LRequest);
+  finally
+    LRequest.Free;
+  end;
+end;
+
+procedure TChangePasswordController.ChangeUserPassword(
+  const ARequest: TChangePasswordRequest);
+var
   LUsers: TTList<TUser>;
 begin
   LUsers := HttpContext.CreateEntityList<TUser>();
   try
     SelectUsers(LUsers, FContext.Payload.Email);
-    VerifyPassword(
-      LUsers[0],
-      FRequest.JSonContent.GetValue<String>('oldPassword', ''));
+    VerifyPassword(LUsers[0], ARequest.OldPassword);
     VerifyEnabled(LUsers[0]);
-    SetPassword(
-      LUsers[0],
-      FRequest.JSonContent.GetValue<String>('newPassword', ''));
+    SetPassword(LUsers[0], ARequest.NewPassword);
     HttpContext.Update<TUser>(LUsers[0]);
     ResponseToken({ TFeature:multitenant }FContext.Payload.Tenant, { /TFeature:multitenant }LUsers[0]);
   finally
