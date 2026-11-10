@@ -42,11 +42,6 @@ type
     [TColumn('VersionID')]
     FVersionID: TTVersion;
   public
-    const Administrator: Integer = 1;
-    const Manager: Integer = 2;
-    const Teacher: Integer = 3;
-    const Student: Integer = 4;
-  public
     property ID: TTPrimaryKey read FID;
     property Description: String read FDescription write FDescription;
     property VersionID: TTVersion read FVersionID;
