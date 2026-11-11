@@ -93,12 +93,16 @@ begin
 end;
 
 function TAuthentication.IsValid(const APayload: TJWTPayload): Boolean;
+var
+  LArea: String;
 begin
   result := not APayload.IsExpired;
   if result then
   begin
     Context.Payload.Assign(APayload);
     FRequest.User.Username := APayload.Email;
+    for LArea in APayload.Areas do
+      FRequest.User.Areas.Add(LArea);
   end;
 end;
 
