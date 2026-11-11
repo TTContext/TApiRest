@@ -55,7 +55,6 @@ end;
 constructor TApiRestTemplateService.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  DisplayName := SAppDescription;
   FHttp := TApiRestTemplateHttp.Create;
 end;
 
